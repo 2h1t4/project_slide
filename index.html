@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>TRACE BEAT</title>
+<style>
+  :root{
+    --bg:#060608;
+    --lane:#0c0c10;
+    --lane-line:#2a2a33;
+    --fg:#f2f2f0;
+    --accent:#39ff8f;
+    --accent-dim:#1d8a52;
+    --danger:#ff3b5c;
+    --note:#f2f2f0;
+    --note-glow: rgba(57,255,143,0.55);
+    --muted:#5b5b66;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{
+    margin:0; height:100%; background:var(--bg); color:var(--fg);
+    font-family: 'Courier New', monospace;
+    overflow:hidden; user-select:none;
+  }
+  #wrap{
+    position:relative; width:100vw; height:100vh;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #stage{
+    position:relative;
+    width:min(100vw, 540px);
+    height:100vh;
+    background:var(--bg);
+    overflow:hidden;
+    border-left:1px solid #1c1c22;
+    border-right:1px solid #1c1c22;
+  }
+  #lanes{
+    position:absolute; inset:0;
+    display:flex;
+  }
+  .lane{
+    flex:1; position:relative;
+  }
+
+  .hitline{
+    display:none;
+  }
+
+  #hud{
+    position:absolute; top:0; left:0; right:0;
+    padding: 18px 18px 0 18px;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    z-index:20; pointer-events:none;
+  }
+  .hud-block .label{
+    font-size:11px; letter-spacing:3px; color:var(--muted);
+  }
+  .hud-block .score{
+    font-size:26px; letter-spacing:2px; font-weight:bold; font-variant-numeric: tabular-nums;
+  }
+  .hud-block .combo{
+    font-size:30px; font-weight:bold; color:var(--accent); margin-top:6px; font-variant-numeric: tabular-nums;
+    text-shadow:0 0 10px var(--note-glow);
+  }
+  #life-wrap{ display:flex; align-items:center; gap:10px; }
+  #life-bar-bg{
+    width:140px; height:10px; border:1px solid #333; background:#111;
+    position:relative; overflow:hidden;
+  }
+  #life-bar-fill{
+    height:100%; width:100%; background:var(--accent);
+    transition: width 0.25s ease, background 0.25s ease;
+  }
+  #life-num{ font-size:13px; color:var(--muted); min-width:34px; }
+  #pause-btn{
+    pointer-events:all; cursor:pointer;
+    width:44px; height:44px; border:1.5px solid var(--fg);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; letter-spacing:3px; background:transparent; color:var(--fg);
+  }
+  #pause-btn:active{ background:var(--fg); color:var(--bg); }
+
+  .note{
+    position:absolute;
+    height:18px;
+    border:2px solid var(--fg);
+    border-radius:3px;
+    background: rgba(242,242,240,0.06);
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+    will-change: transform;
+  }
+  .note.tap{ left:10%; width:80%; }
+  .note.hold::after{
+    content:'';
+    position:absolute; left:50%; top:18px; transform:translateX(-50%);
+    width:6px; background: linear-gradient(var(--fg), transparent);
+    opacity:0.5;
+  }
+  .note.active-trace{
+    border-color: var(--accent);
+    box-shadow: 0 0 14px var(--note-glow);
+  }
+  .note.judged-good{
+    border-color: var(--accent) !important;
+    animation: pop 0.18s ease-out forwards;
+  }
+  .note.judged-miss{
+    border-color: var(--danger) !important;
+    opacity:0.3;
+  }
+  @keyframes pop{
+    0%{ transform:scale(1); opacity:1; }
+    100%{ transform:scale(1.4); opacity:0; }
+  }
+
+  #stick{
+    position:absolute; bottom:140px;
+    width:64px; height:64px;
+    z-index:15;
+  }
+  #stick svg{ width:100%; height:100%; }
+
+  #hint{
+    position:absolute; left:18px; bottom:18px;
+    font-size:12px; color:var(--muted); line-height:1.6; z-index:20;
+  }
+
+  #judge-pop{
+    position:absolute; left:50%; top:38%; transform:translate(-50%,-50%);
+    font-size:22px; font-weight:bold; letter-spacing:2px;
+    pointer-events:none; opacity:0; z-index:25;
+  }
+  #judge-pop.show{ animation: judgepop 0.45s ease-out forwards; }
+  @keyframes judgepop{
+    0%{ opacity:0; transform:translate(-50%,-40%) scale(0.7); }
+    25%{ opacity:1; transform:translate(-50%,-50%) scale(1.1); }
+    100%{ opacity:0; transform:translate(-50%,-55%) scale(1); }
+  }
+
+  #cursor-dot{
+    position:absolute; width:14px; height:14px; border-radius:50%;
+    background: var(--accent); box-shadow:0 0 10px var(--note-glow);
+    pointer-events:none; z-index:30; transform:translate(-50%,-50%);
+    display:none;
+  }
+
+  #overlay{
+    position:absolute; inset:0; background:rgba(6,6,8,0.92);
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    z-index:50; text-align:center; gap:18px; padding: 20px;
+  }
+  #overlay h1{
+    font-size:34px; letter-spacing:6px; margin:0; color:var(--accent);
+    text-shadow:0 0 18px var(--note-glow);
+  }
+  #overlay p{ color:var(--muted); font-size:13px; max-width:280px; line-height:1.7; margin:0; }
+  .btn{
+    pointer-events:all; cursor:pointer;
+    border:1.5px solid var(--fg); color:var(--fg); background:transparent;
+    padding:12px 36px; font-family:inherit; font-size:15px; letter-spacing:4px;
+    transition: all 0.15s;
+  }
+  .btn:active{ background:var(--fg); color:var(--bg); }
+  .stat-row{ display:flex; gap:28px; margin:6px 0 6px; }
+  .stat{ text-align:center; }
+  .stat .v{ font-size:24px; font-weight:bold; }
+  .stat .k{ font-size:10px; color:var(--muted); letter-spacing:2px; }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <div id="lanes">
+      <div class="lane" data-lane="0"></div>
+      <div class="lane" data-lane="1"></div>
+      <div class="lane" data-lane="2"></div>
+      <div class="lane" data-lane="3"></div>
+    </div>
+    <div class="hitline" id="hitline"></div>
+
+    <div id="hud">
+      <div class="hud-block">
+        <div class="label">SCORE</div>
+        <div class="score" id="score">00000000</div>
+        <div class="label" style="margin-top:14px;">COMBO</div>
+        <div class="combo" id="combo">0</div>
+      </div>
+      <div class="hud-block" style="text-align:right;">
+        <div class="label">LIFE</div>
+        <div id="life-wrap">
+          <div id="life-bar-bg"><div id="life-bar-fill"></div></div>
+          <div id="life-num">1000</div>
+        </div>
+        <button id="pause-btn">II</button>
+      </div>
+    </div>
+
+    <div id="judge-pop"></div>
+    <div id="cursor-dot"></div>
+
+    <div id="stick">
+      <svg viewBox="0 0 64 64">
+        <polygon points="32,4 38,16 26,16" fill="#f2f2f0"/>
+        <polygon points="32,60 38,48 26,48" fill="#f2f2f0"/>
+        <polygon points="4,32 16,26 16,38" fill="#f2f2f0"/>
+        <polygon points="60,32 48,26 48,38" fill="#f2f2f0"/>
+        <rect x="20" y="20" width="24" height="24" fill="none" stroke="#f2f2f0" stroke-width="2"/>
+        <circle cx="27" cy="29" r="1.6" fill="#f2f2f0"/>
+        <circle cx="37" cy="29" r="1.6" fill="#f2f2f0"/>
+      </svg>
+    </div>
+
+    <div id="hint">マウスで左右に移動！</div>
+
+    <div id="overlay">
+      <h1 id="overlay-title">TRACE BEAT</h1>
+      <p id="overlay-text">マウスを左右に動かすと<br>キャラクターが横移動します。</p>
+      <div class="stat-row hidden" id="result-stats">
+        <div class="stat"><div class="v" id="r-score">0</div><div class="k">SCORE</div></div>
+        <div class="stat"><div class="v" id="r-combo">0</div><div class="k">MAX COMBO</div></div>
+        <div class="stat"><div class="v" id="r-acc">0%</div><div class="k">ACCURACY</div></div>
+      </div>
+      <button class="btn" id="start-btn">START</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const lanesEl = document.getElementById('lanes');
+  const laneEls = [...document.querySelectorAll('.lane')];
+  const hitline = document.getElementById('hitline');
+  const scoreEl = document.getElementById('score');
+  const comboEl = document.getElementById('combo');
+  const lifeFill = document.getElementById('life-bar-fill');
+  const lifeNum = document.getElementById('life-num');
+  const overlay = document.getElementById('overlay');
+  const overlayTitle = document.getElementById('overlay-title');
+  const overlayText = document.getElementById('overlay-text');
+  const startBtn = document.getElementById('start-btn');
+  const pauseBtn = document.getElementById('pause-btn');
+  const judgePop = document.getElementById('judge-pop');
+  const cursorDot = document.getElementById('cursor-dot');
+  const resultStats = document.getElementById('result-stats');
+  const rScore = document.getElementById('r-score');
+  const rCombo = document.getElementById('r-combo');
+  const rAcc = document.getElementById('r-acc');
+
+  let stageW, stageH;
+  const CHAR_HALF = 32;
+
+  function resize(){
+    const r = stage.getBoundingClientRect();
+    stageW = r.width; stageH = r.height;
+    if(charX === undefined) charX = stageW/2;
+    charX = Math.max(CHAR_HALF, Math.min(stageW - CHAR_HALF, charX));
+    renderChar();
+  }
+  window.addEventListener('resize', resize);
+
+  let running = false, paused = false;
+  let score = 0, combo = 0, life = 1000;
+  let charX;
+
+  const stickEl = document.getElementById('stick');
+
+  function updateHUD(){
+    scoreEl.textContent = String(score).padStart(8,'0');
+    comboEl.textContent = combo;
+    const pct = Math.max(0, Math.min(100, life/10));
+    lifeFill.style.width = pct + '%';
+    lifeNum.textContent = Math.max(0, Math.round(life));
+  }
+
+  function renderChar(){
+    if(charX === undefined) return;
+    stickEl.style.left = charX + 'px';
+    stickEl.style.transform = 'translateX(-50%)';
+  }
+
+  function resetGame(){
+    score = 0; combo = 0; life = 1000;
+    charX = stageW / 2;
+    updateHUD();
+    renderChar();
+  }
+
+  function handlePointer(clientX){
+    const rect = stage.getBoundingClientRect();
+    let x = clientX - rect.left;
+    x = Math.max(CHAR_HALF, Math.min(stageW - CHAR_HALF, x));
+    charX = x;
+    renderChar();
+  }
+
+  stage.addEventListener('mousemove', (e)=>{
+    if(!running || paused) return;
+    handlePointer(e.clientX);
+  });
+  stage.addEventListener('touchstart', (e)=>{
+    if(!running || paused) return;
+    handlePointer(e.touches[0].clientX);
+    e.preventDefault();
+  }, {passive:false});
+  stage.addEventListener('touchmove', (e)=>{
+    if(!running || paused) return;
+    handlePointer(e.touches[0].clientX);
+    e.preventDefault();
+  }, {passive:false});
+
+  function startGame(){
+    resize();
+    resetGame();
+    overlay.classList.add('hidden');
+    running = true; paused = false;
+  }
+
+  startBtn.addEventListener('click', startGame);
+
+  pauseBtn.addEventListener('click', ()=>{
+    if(!running) return;
+    paused = !paused;
+    pauseBtn.textContent = paused ? '▶' : 'II';
+  });
+
+  resize();
+})();
+</script>
+</body>
+</html>
