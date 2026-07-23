@@ -15,3 +15,13 @@ document.addEventListener("mousemove",(event)=>{
     }
     player.style.left = x + "px";
 });
+
+function createNote(x){
+    const note = document.createElement("div");
+    note.className = "note";
+
+    note.style.left = x + "px";
+    note.style.top = "0px";
+    game.appendChild(note);
+}
+createNote(10);
