@@ -1,0 +1,63 @@
+body{
+    margin:0;
+    background:#444;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    height:100vh;
+}
+
+#game{
+    width:800px;
+    height:900px;
+
+    background:black;
+    border:3px solid white;
+
+    position:relative;
+    overflow:hidden;
+}
+
+/* 上のUI */
+
+#ui{
+    width:100%;
+    height:50px;
+
+    color:white;
+
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+
+    font-family:monospace;
+    font-size:22px;
+}
+
+/* ノーツ */
+
+.note{
+    width:100px;
+    height:18px;
+
+    background:white;
+
+    position:absolute;
+}
+
+/* プレイヤー */
+
+#player{
+    width:30px;
+    height:30px;
+
+    background:white;
+
+    position:absolute;
+
+    left:385px;
+    bottom:40px;
+
+}
