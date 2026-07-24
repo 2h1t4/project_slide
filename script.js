@@ -1,6 +1,7 @@
 const game = document.getElementById("game")
 const player = document.getElementById("player");
-const rect = game.getBoundingClientRect()
+const rect = game.getBoundingClientRect();
+const notes = document.getElementById("notes");
 console.log("読み込ませる");
 
 document.addEventListener("mousemove",(event)=>{
@@ -22,6 +23,6 @@ function createNote(x){
 
     note.style.left = x + "px";
     note.style.top = "0px";
-    game.appendChild(note);
+    notes.appendChild(note);
 }
-createNote(10);
+createNote(200);
