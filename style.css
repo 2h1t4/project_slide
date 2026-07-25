@@ -11,20 +11,24 @@ body{
 
 #game{
     width:800px;
-    height:900px;
+    height:890px;
 
     background:black;
     border:3px solid red;
-
+    border-bottom: 3px solid white;
     position:relative;
     overflow:hidden;
+    z-index: 1;
 }
 
 /* 上のUI */
 
 #ui{
+    position: absolute;
+    top:0;
+    left:0;
     width:100%;
-    height:50px;
+    height:500px;
 
     color:white;
 
@@ -34,15 +38,28 @@ body{
 
     font-family:monospace;
     font-size:22px;
+    z-index: 10;
+
 }
 
 /* ノーツ */
+#notes{
+    position:absolute;
+    top:200px;
+    left:0;
+    width:100%;
+    height:10%;
+    
+    z-index: 2;
+
+    /* background: rgba(0,0,255,0.2); */
+}
 
 .note{
     width:100px;
-    height:18px;
+    height:12px;
 
-    background:white;
+    background:red;
 
     position:absolute;
 }
@@ -50,8 +67,8 @@ body{
 /* プレイヤー */
 
 #player{
-    width:30px;
-    height:30px;
+    width:610px;
+    height:18px;
 
     background:white;
 
@@ -59,5 +76,5 @@ body{
 
     left:385px;
     bottom:40px;
-
+    z-index: 4;
 }
