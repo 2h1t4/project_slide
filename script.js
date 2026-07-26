@@ -3,6 +3,10 @@ const player = document.getElementById("player");
 const rect = game.getBoundingClientRect();
 const notes = document.getElementById("notes");
 const notesList = [];
+const startTime = performance.now();
+const travelTime = 1500; 
+const judgeLineY = 835;
+const judgeText = document.getElementById("judgeText");
 console.log("読み込ませる");
 
 document.addEventListener("mousemove",(event)=>{
@@ -21,119 +25,126 @@ document.addEventListener("mousemove",(event)=>{
 let ispressed = false;
 
 document.addEventListener("keydown",(event) =>{
+    if(event.repeat)return;
     ispressed = true;
+    console.log("ahin");
 });
 
-function createNote(x,y){
+function createNote(x,noteTime){
     const newNote = document.createElement("div");
     newNote.className = "note";
 
     newNote.style.left = x + "px";
-    newNote.style.top = y + "px";
     notes.appendChild(newNote);
     notesList.push({
         x: x,
-        y: y,
+        noteTime: noteTime,
         element:newNote
     });
 }
-createNote(200,-100);
-createNote(100,-200);
-createNote(300,-300);
-createNote(400,-400);
-createNote(500,-500);
-createNote(500,-550);
-createNote(500,-600);
-createNote(500,-650);
-createNote(500,-700);
-createNote(500,-750);
-createNote(300,-900);
-createNote(350,-920);
-createNote(400,-940);
-createNote(450,-960);
-createNote(450,-1160);
-createNote(460,-1163);
+createNote(200,200);
+createNote(100,2500);
+createNote(300,3000);
+createNote(400,3500);
+createNote(500,4000);
+createNote(500,4100);
+createNote(500,4200);
+createNote(500,4300);
+createNote(500,4400);
+createNote(500,4500);
+createNote(300,4600);
+createNote(350,4700);
+createNote(450,5000);
+createNote(460,5160);
 
 
 
 
 function updatanote(){
+    
+    const currenTime = performance.now() - startTime;
     for(let i = notesList.length - 1; i >= 0; i--){
         const note = notesList[i];
-        note.y += 5;
-        note.element.style.top = note.y + "px";
+    
 
-        if(note.y > 660){
+        const remain = note.noteTime - currenTime;
+        const progress = 1 - remain / travelTime;
+        const y = progress * judgeLineY
+        note.element.style.top = (y - 18)+ "px";
+        const error = currenTime - note.noteTime;
+        if(error > 80){
             note.element.remove();
             notesList.splice(i,1);
-            console.log("miss");
+            showJudge("miss");
+            
         }        
     }
 }
+function showJudge(text){
+    judgeText.textContent = text;
+    judgeText.style.opacity = 1;
 
+    setTimeout(() => {
+        judgeText.style.opacity = 0;
+    }, 300);
+}
 function checkHit(){
     const playerRect = player.getBoundingClientRect();
+    const currenTime = performance.now() - startTime;
 
     for(let i = notesList.length - 1; i >= 0; i--){
         const note = notesList[i];
         const noteRect = note.element.getBoundingClientRect();
-        
+        const error = Math.abs(currenTime - note.noteTime);
         if(
             ispressed == true &&
             playerRect.left < noteRect.right &&
             playerRect.right > noteRect.left &&
-            playerRect.top -20 < noteRect.bottom &&
-            playerRect.top - 11 > noteRect.bottom 
+            error < 80 &&
+            error > 70
         ){
             note.element.remove();
             notesList.splice(i,1);
-            console.log("miss");
+            showJudge("miss");
+
             break;
         }
         else if(
             ispressed == true &&
             playerRect.left < noteRect.right &&
             playerRect.right > noteRect.left &&
-            playerRect.top -10 < noteRect.bottom &&
-            playerRect.top - 1 > noteRect.bottom 
+            error <= 70 &&
+            error > 50
         ){
             note.element.remove();
             notesList.splice(i,1);
-            console.log("great");
+            showJudge("great");
+            console.log(error);
             break;
         }
         else if(
             ispressed == true &&
             playerRect.left < noteRect.right &&
             playerRect.right > noteRect.left &&
-            playerRect.top  < noteRect.bottom &&
-            playerRect.bottom - 10 > noteRect.top 
+            error <= 50
         ){
             note.element.remove();
             notesList.splice(i,1);
-            console.log("perfect");
+            showJudge("perfect");
+            console.log(error);
             break;
         }
-        else if(
-            ispressed == true &&
-            playerRect.left < noteRect.right &&
-            playerRect.right > noteRect.left &&
-            playerRect.bottom -9  < noteRect.top &&
-            playerRect.bottom + 1 > noteRect.top 
-        ){
-            note.element.remove();
-            notesList.splice(i,1);
-            console.log("great");
-            break;
-        }
+        
     }
 }
 function gameLoop(){
-    updatanote();
     checkHit();
+    updatanote();
     ispressed = false;
 
     requestAnimationFrame(gameLoop);
     
 }
 gameLoop();
+const playerY = player.getBoundingClientRect().top - game.getBoundingClientRect().top;
+console.log("player=" + playerY);
