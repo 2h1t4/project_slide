@@ -5,8 +5,12 @@ const notes = document.getElementById("notes");
 const notesList = [];
 const startTime = performance.now();
 const travelTime = 1500; 
-const judgeLineY = 835;
+const judgeLineY = 850;
 const judgeText = document.getElementById("judgeText");
+const judgeTime = document.getElementById("judgeTime");
+const score = document.getElementById("score");
+const combo = document.getElementById("combo");
+const life = document.getElementById("life");
 console.log("読み込ませる");
 
 document.addEventListener("mousemove",(event)=>{
@@ -42,20 +46,22 @@ function createNote(x,noteTime){
         element:newNote
     });
 }
-createNote(200,200);
+createNote(200,2000);
 createNote(100,2500);
 createNote(300,3000);
 createNote(400,3500);
 createNote(500,4000);
-createNote(500,4100);
-createNote(500,4200);
-createNote(500,4300);
-createNote(500,4400);
-createNote(500,4500);
+createNote(600,4100);
+createNote(700,4200);
+createNote(600,4300);
+createNote(400,4400);
+createNote(300,4500);
 createNote(300,4600);
 createNote(350,4700);
 createNote(450,5000);
-createNote(460,5160);
+createNote(600,5160);
+createNote(200,6000);
+createNote(600,6050);
 
 
 
@@ -72,7 +78,7 @@ function updatanote(){
         const y = progress * judgeLineY
         note.element.style.top = (y - 18)+ "px";
         const error = currenTime - note.noteTime;
-        if(error > 80){
+        if(error > 500){
             note.element.remove();
             notesList.splice(i,1);
             showJudge("miss");
@@ -80,13 +86,29 @@ function updatanote(){
         }        
     }
 }
-function showJudge(text){
+function showJudge(text,judgeError){
     judgeText.textContent = text;
     judgeText.style.opacity = 1;
+    judgeTime.textContent = judgeError;
+    judgeTime.style.opacity = 1;
 
     setTimeout(() => {
         judgeText.style.opacity = 0;
+        judgeTime.style.opacity = 0;
     }, 300);
+}
+let totalNote = notesList.length;
+let noteScore = 1000000 / totalNote;
+let sumScore = 0;
+function scoreCheck(text){
+    
+    
+    if (text == "perfect"){
+        sumScore += noteScore;
+    }else if (text == "great"){
+        sumScore += noteScore * 0.7;
+    }
+    score.textContent = sumScore;
 }
 function checkHit(){
     const playerRect = player.getBoundingClientRect();
@@ -96,16 +118,19 @@ function checkHit(){
         const note = notesList[i];
         const noteRect = note.element.getBoundingClientRect();
         const error = Math.abs(currenTime - note.noteTime);
+        const judgeError = note.noteTime - currenTime;
         if(
             ispressed == true &&
             playerRect.left < noteRect.right &&
             playerRect.right > noteRect.left &&
-            error < 80 &&
-            error > 70
+            error < 85 &&
+            error > 80
         ){
             note.element.remove();
             notesList.splice(i,1);
-            showJudge("miss");
+            showJudge("miss",judgeError);
+            
+            console.log(error);
 
             break;
         }
@@ -113,12 +138,13 @@ function checkHit(){
             ispressed == true &&
             playerRect.left < noteRect.right &&
             playerRect.right > noteRect.left &&
-            error <= 70 &&
+            error <= 80 &&
             error > 50
         ){
             note.element.remove();
             notesList.splice(i,1);
-            showJudge("great");
+            showJudge("great",judgeError);
+            scoreCheck("great");
             console.log(error);
             break;
         }
@@ -130,19 +156,24 @@ function checkHit(){
         ){
             note.element.remove();
             notesList.splice(i,1);
-            showJudge("perfect");
+            showJudge("perfect",judgeError);
+            scoreCheck("perfect");
             console.log(error);
+
             break;
         }
         
     }
 }
+let _y = 2000;
 function gameLoop(){
     checkHit();
     updatanote();
     ispressed = false;
 
     requestAnimationFrame(gameLoop);
+        
+
     
 }
 gameLoop();

@@ -93,3 +93,18 @@ body{
 
     opacity: 0;
 }
+#judgeTime{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+
+    z-index: 999;
+
+    opacity: 0;
+}
