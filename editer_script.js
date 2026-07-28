@@ -11,32 +11,6 @@ const judgeTime = document.getElementById("judgeTime");
 const score = document.getElementById("score");
 const combo = document.getElementById("combo");
 const life = document.getElementById("life");
-document.getElementById('game').style.cursor = 'none';
-let timeCount = 0;
-let numNotes = 0;
-
-function calcTime(spawnTime){
-    timeCount += spawnTime
-    return timeCount;
-}
-
-function saveChart(chart){
-    const json = JSON.stringify(chart,null,4);
-    const blob = new Blob([json],{
-        type:"application/json"
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-
-    a.href = url;
-    a.download = "chart.json";
-
-    a.click();
-
-    URL.revokeObjectURL(url);
-
-}
-// saveChart();
 console.log("読み込ませる");
 document.addEventListener("mousemove",(event)=>{
 
@@ -71,42 +45,26 @@ function createNote(x,noteTime){
         element:newNote
     });
 }
-
-
-async function loadChart(fileName){
-    const res = await fetch(fileName);
-
-    if(!res.ok){
-        throw new Error("ファイルが開けませんでした");
-    }
-
-    const data = await res.json();
-
-    numNotes = data.length;
-    data.forEach(element => {
-        createNote(
-            element.x,
-            calcTime(element.noteTime)
-        );
-    });
-}
-loadChart("chart.json");
+const chart = [
+    {x:100, noteTime:1000},
+    {x:250, noteTime:2000},
+    {x:400, noteTime:3000},
+    {x:650, noteTime:4000},
+]
 
 
 
-
-function updatanote(){
+function updatanote(currentTime){
     
-    const currenTime = performance.now() - startTime;
     for(let i = notesList.length - 1; i >= 0; i--){
         const note = notesList[i];
     
 
-        const remain = note.noteTime - currenTime;
+        const remain = note.noteTime - currentTime;
         const progress = 1 - remain / travelTime;
         const y = progress * judgeLineY
         note.element.style.top = (y - 18)+ "px";
-        const error = currenTime - note.noteTime;
+        const error = currentTime - note.noteTime;
         if(error > 500){
             note.element.remove();
             notesList.splice(i,1);
@@ -127,11 +85,11 @@ function showJudge(text,judgeError){
         judgeTime.style.opacity = 0;
     }, 300);
 }
-
 let sumScore = 0;
 score.textContent = Math.floor(sumScore).toString().padStart(7, "0");
-function scoreCheck(text){   
-    let noteScore = 1000000 / numNotes;
+let totalNote = notesList.length;
+let noteScore = 1000000 / totalNote;
+function scoreCheck(text){
     if (text == "perfect"){
         sumScore += noteScore;
     }else if (text == "great"){
@@ -139,7 +97,6 @@ function scoreCheck(text){
     }
     score.textContent = Math.floor(sumScore).toString().padStart(7, "0");
 }
-
 let totalConbo = 0; 
 combo.textContent = totalConbo;
 function comboCount(text){
@@ -150,16 +107,14 @@ function comboCount(text){
     }
     combo.textContent = totalConbo;
 }
-
-function checkHit(){
+function checkHit(currentTime){
     const playerRect = player.getBoundingClientRect();
-    const currenTime = performance.now() - startTime;
 
     for(let i = notesList.length - 1; i >= 0; i--){
         const note = notesList[i];
         const noteRect = note.element.getBoundingClientRect();
-        const error = Math.abs(currenTime - note.noteTime);
-        const judgeError = note.noteTime - currenTime;
+        const error = Math.abs(currentTime - note.noteTime);
+        const judgeError = note.noteTime - currentTime;
         if(
             ispressed == true &&
             playerRect.left < noteRect.right &&
@@ -203,22 +158,29 @@ function checkHit(){
             scoreCheck("perfect");
             comboCount("perfect");
             console.log(error);
-
             break;
         }
-        
     }
 }
 
+let totalPausedTime = 0;
+let isPlaying = false;
+document.addEventListener("keydown",(event) =>{
+    if(event.code !== "Space")return;
+    if(event.repeat)return;
+    isPlaying = !isPlaying;
+
+});
+
 
 function gameLoop(){
-    checkHit();
-    updatanote();
-    ispressed = false;
-
+    const currentTime = performance.now() - startTime;
+    if(isPlaying){
+        checkHit(currentTime);
+        updatanote(currentTime);
+        ispressed = false;
+    }
+    
     requestAnimationFrame(gameLoop);
 }
-
 gameLoop();
-const playerY = player.getBoundingClientRect().top - game.getBoundingClientRect().top;
-console.log("player=" + playerY);
