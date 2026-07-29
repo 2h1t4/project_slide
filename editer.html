@@ -14,7 +14,9 @@
         <div id = "combo"></div>
         <div id = "life">LIFE : red</div>
     </div>
-
+    <div id = "gridLine">
+        
+    </div>
     <!-- ノーツ置き場 -->
     <div id="notes">
         
@@ -26,9 +28,11 @@
     <div id = "judgeText"></div>
     <div id = "judgeTime"></div>
 </div>
-<button onclick="location.href='index.html'">
-    ゲームへ
-</button>
+<div id="controls">
+    <input type="file" id="chartInput" accept=".json" style="display:none;">
+    <button onclick="document.getElementById('chartInput').click()">JSONを読み込む</button>
+    <button onclick="location.href='index.html'">ゲームへ</button>
+</div>
 
 <script src="editer_script.js"></script>
 </html>
