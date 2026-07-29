@@ -112,3 +112,8 @@ body{
 
     opacity: 0;
 }
+button{
+    position: absolute;
+    left:90%;
+    top:50%;
+}

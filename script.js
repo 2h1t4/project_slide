@@ -20,23 +20,6 @@ function calcTime(spawnTime){
     return timeCount;
 }
 
-function saveChart(chart){
-    const json = JSON.stringify(chart,null,4);
-    const blob = new Blob([json],{
-        type:"application/json"
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-
-    a.href = url;
-    a.download = "chart.json";
-
-    a.click();
-
-    URL.revokeObjectURL(url);
-
-}
-// saveChart();
 console.log("読み込ませる");
 document.addEventListener("mousemove",(event)=>{
 
@@ -54,6 +37,7 @@ document.addEventListener("mousemove",(event)=>{
 let ispressed = false;
 
 document.addEventListener("keydown",(event) =>{
+    if(event.code === "Enter")return; 
     if(event.repeat)return;
     ispressed = true;
     console.log("ahin");

@@ -11,6 +11,9 @@ const judgeTime = document.getElementById("judgeTime");
 const score = document.getElementById("score");
 const combo = document.getElementById("combo");
 const life = document.getElementById("life");
+const music = document.getElementById("music")
+let bpm = 114;
+const 
 console.log("読み込ませる");
 document.addEventListener("mousemove",(event)=>{
 
@@ -28,6 +31,7 @@ document.addEventListener("mousemove",(event)=>{
 let ispressed = false;
 
 document.addEventListener("keydown",(event) =>{
+    if(event.code === "Enter")return; 
     if(event.repeat)return;
     ispressed = true;
     console.log("ahin");
@@ -47,12 +51,29 @@ function createNote(x,noteTime){
 }
 const chart = [
     {x:100, noteTime:1000},
-    {x:250, noteTime:2000},
-    {x:400, noteTime:3000},
-    {x:650, noteTime:4000},
+    {x:250, noteTime:1000},
+    {x:400, noteTime:1000},
+    {x:650, noteTime:1000},
 ]
 
 
+function saveChart(chart){
+    const json = JSON.stringify(chart,null,4);
+    const blob = new Blob([json],{
+        type:"application/json"
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "chart.json";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+}
+saveChart();
 
 function updatanote(currentTime){
     
@@ -166,7 +187,7 @@ function checkHit(currentTime){
 let totalPausedTime = 0;
 let isPlaying = false;
 document.addEventListener("keydown",(event) =>{
-    if(event.code !== "Space")return;
+    if(event.code !== "Enter")return;
     if(event.repeat)return;
     isPlaying = !isPlaying;
 
@@ -179,6 +200,7 @@ function gameLoop(){
         checkHit(currentTime);
         updatanote(currentTime);
         ispressed = false;
+        music.play();
     }
     
     requestAnimationFrame(gameLoop);
