@@ -157,9 +157,9 @@ function changeGrid(div){
 
 
 // BPMとタイムライングリッド線
-let bpm = 114;
+let bpm = 120;
 let noteIntervalSec = bpm / 60;
-let totalDurationSec = 69;
+let totalDurationSec = 35;
 
 
 function initTimelineLines(totalDurationSec, bpm) {
