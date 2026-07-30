@@ -2,29 +2,42 @@ const game = document.getElementById("game");
 const player = document.getElementById("player");
 const rect = game.getBoundingClientRect();
 const notes = document.getElementById("notes");
+const editerarea = document.getElementById("editerarea");
+const playerRect = player.getBoundingClientRect();
+const playerTop = playerRect.top - rect.top;
 const notesList = [];
 const startTime = performance.now();
-const travelTime = 1400; 
-const judgeLineY = 850;
+const travelTime = 16470; 
+const judgeLineY = 10000;
 const judgeText = document.getElementById("judgeText");
 const judgeTime = document.getElementById("judgeTime");
 const score = document.getElementById("score");
 const combo = document.getElementById("combo");
 const life = document.getElementById("life");
 const music = document.getElementById("music");
-let offset = 260;
+const gridLinesList = [];
+let chart = [];
+let offset = 540;
 let numNotes = 0;
 
 let playerX = 385;
 const playerWidth = 120;
 const noteWidth = 100;
+const noteheight = 12;
 
 let audioStartTime = 0;
 let isPlaying = false;
 
 console.log("エディター読み込み完了（Smooth Audio Clock適用済み）");
 
+
+document.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+});
+
+
 document.addEventListener("mousemove", (event) => {
+    const rect = game.getBoundingClientRect();
     let x = event.clientX - rect.left;
     x -= playerWidth / 2;
     if (x < 0) {
@@ -46,26 +59,108 @@ document.addEventListener("keydown", (event) => {
 });
 
 
-function getSmoothMusicTime() {
-    if (!isPlaying) {
-        return music.currentTime * 1000;
-    }
-    const smoothTime = performance.now() - audioStartTime;
-    const actualTime = music.currentTime * 1000;
+game.addEventListener("mousedown",(event) => {
+    const rect = game.getBoundingClientRect();
+    if(event.button === 0){
+        const editRect = editerarea.getBoundingClientRect();
 
-    // 音源の実際の再生時間と大幅な開きがある場合は位置補正
-    if (Math.abs(smoothTime - actualTime) > 150) {
-        audioStartTime = performance.now() - actualTime;
-        return actualTime;
+        const x = event.clientX - rect.left;
+        const y = event.clientY - editRect.top;
+
+        let nearst = null;
+        let min = Infinity;
+
+        gridLinesList.forEach(grid =>{
+            const distance = Math.abs(y - grid.y);
+
+            if(min > distance){
+                min = distance;
+                nearst = grid;
+            }
+        });
+        let noteTime = nearst.timeMs + 1000;
+        createNote(x,noteTime)
+
+    }else if(event.button === 2){
+        event.preventDefault();
+        const editRect = editerarea.getBoundingClientRect();
+        for (let i = notesList.length - 1; i >= 0; i--){
+            const note = notesList[i];
+            const x = event.clientX - rect.left;
+            const y = event.clientY - editRect.top;
+            
+            const noteLeft = note.x;
+            const noteRight = note.x + noteWidth;
+            const noteTop = note.element.offsetTop;
+            const noteBottom = noteTop + note.element.offsetHeight;
+
+            const isOverlapX = x < noteRight && x > noteLeft;
+            const isOverlapY = y > noteTop && y < noteBottom;
+            if(isOverlapX && isOverlapY){
+                note.element.remove();
+                notesList.splice(i, 1);
+                chart.splice(i,1);
+                break;
+            }
+        }
+        
     }
-    return smoothTime;
+});
+
+
+
+
+document.addEventListener("wheel", (event) => {
+    const rect = game.getBoundingClientRect();
+    if(isPlaying)return;
+
+    const mouseX = event.clientX;
+    const mouseY = event.clientY;
+
+    // ゲーム画面内なら何もしない
+    if (
+        mouseX >= rect.left &&
+        mouseX <= rect.right &&
+        mouseY >= rect.top &&
+        mouseY <= rect.bottom
+    ) {
+        return;
+    }
+
+    const moveTime = 500;
+    if(event.deltaY > 0){
+        music.currentTime -= moveTime / 1000;
+    }else {
+        // 下スクロール → 後ろへ
+        music.currentTime += moveTime / 1000;
+    }
+    if (music.currentTime < 0) {
+            music.currentTime = 0;
+        }
+
+        if (music.currentTime > music.duration) {
+            music.currentTime = music.duration;
+        }
+
+
+        // Smooth Audio Clockを同期
+        audioStartTime = performance.now() - music.currentTime * 1000;
+});
+
+
+
+let gridDivistion = 4;
+function changeGrid(div){
+    gridDivistion = div;
+    initTimelineLines(totalDurationSec, bpm);
 }
+
 
 // BPMとタイムライングリッド線
 let bpm = 114;
-let noteIntervalSec = 60 / bpm;
-let totalDurationSec = 180;
-const gridLinesList = [];
+let noteIntervalSec = bpm / 60;
+let totalDurationSec = 69;
+
 
 function initTimelineLines(totalDurationSec, bpm) {
     const container = document.getElementById("gridLine");
@@ -73,38 +168,41 @@ function initTimelineLines(totalDurationSec, bpm) {
     container.innerHTML = "";
     gridLinesList.length = 0;
 
-    const intervalSec = 60 / bpm;
+    const beat = 60 / bpm;
+    const intervalSec = beat * (4 / gridDivistion);
     let count = 0;
 
     for (let t = 0; t <= totalDurationSec; t += intervalSec) {
         const line = document.createElement("div");
         line.className = "grid-line";
-        if (count % 4 === 0) {
+        if (count % gridDivistion === 0) {
             line.classList.add("bar-line");
         }
         container.appendChild(line);
 
         gridLinesList.push({
             timeMs: t * 1000,
-            element: line
+            element: line,
+            y:0
         });
         count++;
     }
-}
-initTimelineLines(totalDurationSec, bpm);
+}initTimelineLines(totalDurationSec, bpm);
+
 
 function updateTimelineLines(currentMusicTime) {
     for (let i = 0; i < gridLinesList.length; i++) {
         const lineObj = gridLinesList[i];
-        const remain = lineObj.timeMs - currentMusicTime;
+        const remain = lineObj.timeMs - currentMusicTime + 1010;
         const progress = 1 - remain / travelTime;
         const y = progress * judgeLineY;
+        lineObj.y = y;
 
-        if (y >= -20 && y <= judgeLineY + 60) {
+        if (y >= judgeLineY + 60) {
+            lineObj.element.style.display = "none";
+        } else {
             lineObj.element.style.display = "block";
             lineObj.element.style.top = `${y}px`;
-        } else {
-            lineObj.element.style.display = "none";
         }
     }
 }
@@ -120,6 +218,12 @@ function createNote(x, noteTime) {
         noteTime: noteTime,
         element: newNote
     });
+
+    chart.push({
+        x:x,
+        noteTime:noteTime
+    });
+    console.log(chart);
 }
 
 function clearNotes() {
@@ -133,11 +237,10 @@ function clearNotes() {
 
 function loadChartData(data) {
     clearNotes();
+    chart = [];
     numNotes = data.length;
-    let accumulatedTime = 0;
     data.forEach(item => {
-        accumulatedTime += item.noteTime;
-        createNote(item.x, accumulatedTime);
+        createNote(item.x, item.noteTime);
     });
 }
 
@@ -201,6 +304,7 @@ function getSmoothMusicTime() {
     return smoothTime;
 }
 
+
 // 判定表示・スコア・コンボ関数
 function showJudge(text, judgeError) {
     judgeText.textContent = text;
@@ -260,8 +364,8 @@ function checkHit(currentTime) {
             error < 85 &&
             error > 80
         ) {
-            note.element.remove();
-            notesList.splice(i, 1);
+            // note.element.remove();
+            // notesList.splice(i, 1);
             showJudge("miss", judgeError);
             comboCount("miss");
             break;
@@ -272,8 +376,8 @@ function checkHit(currentTime) {
             error <= 80 &&
             error > 50
         ) {
-            note.element.remove();
-            notesList.splice(i, 1);
+            // note.element.remove();
+            // notesList.splice(i, 1);
             showJudge("great", judgeError);
             scoreCheck("great");
             comboCount("great");
@@ -284,8 +388,8 @@ function checkHit(currentTime) {
             isOverlapX &&
             error <= 50
         ) {
-            note.element.remove();
-            notesList.splice(i, 1);
+            // note.element.remove();
+            // notesList.splice(i, 1);
             showJudge("perfect", judgeError);
             scoreCheck("perfect");
             comboCount("perfect");
@@ -310,8 +414,8 @@ function updatanote(currentTime) {
 
         const error = currentTime - note.noteTime;
         if (isPlaying && error > 500) {
-            note.element.remove();
-            notesList.splice(i, 1);
+            // note.element.remove();
+            // notesList.splice(i, 1);
             showJudge("miss");
             comboCount("miss");
         }
@@ -325,10 +429,12 @@ document.addEventListener("keydown", (event) => {
     isPlaying = !isPlaying;
 
     if (isPlaying) {
+        game.classList.add("playing");
         audioStartTime = performance.now() - (music.currentTime * 1000);
         music.play();
     } else {
         music.pause();
+
     }
 });
 

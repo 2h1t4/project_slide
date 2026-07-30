@@ -74,7 +74,7 @@ async function loadChart(fileName){
         data.forEach(element => {
             createNote(
                 element.x,
-                calcTime(element.noteTime)
+                element.noteTime
             );
         });
     } catch(e) {
