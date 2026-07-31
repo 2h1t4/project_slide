@@ -1,0 +1,214 @@
+body {
+    width: 100vw;
+    height: 100vh;    
+    margin: 0;
+    background: #081523;
+    color: #fff;
+    font-family: sans-serif;
+}
+
+.bg {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #2d1566, #ef680062);
+    filter: blur(2px);
+}
+
+.back-btn {
+    position: fixed;
+
+    top: 20px;
+    left: 20px;
+
+    padding: 12px 25px;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    color: white;
+    background: transparent;
+
+    border: 2px solid #00eaff;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.back-btn:hover {
+    background: #00eaff;
+    color: #081523;
+    box-shadow: 0 0 15px #00eaff;
+}
+
+header,
+nav,
+.levels,
+.songs,
+.info {
+    position: relative;
+    z-index: 1;
+}
+
+header {
+    padding: 20px;
+    text-align: center;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 77px;
+}
+
+header h1 {
+    position: relative;
+    padding: 20px 80px;
+    font-size: 37px;
+    letter-spacing: 5px;
+    color: white;
+    z-index: 1;
+}
+
+
+nav,
+.levels {
+
+    display: flex;
+    gap: 20px;
+
+    padding: 15px 25px;
+
+    border: 3px solid #9bebf2;
+    border-radius: 5px;
+
+    width: fit-content;
+    margin: 20px auto;
+}
+
+button {
+    background: #0b4f7a;
+    color: #fff;
+    border: 2px solid #39d5ff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.active {
+    box-shadow: 0 0 12px #39d5ff;
+}
+
+.songs {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    width: 600px;
+
+    padding: 20px;
+}
+
+.card {
+
+    display: grid;
+
+    grid-template-columns: 2fr 1fr 80px;
+
+    align-items: center;
+
+
+    width: 100%;
+
+    padding: 15px 20px;
+
+
+    background: #d53c3c65;
+
+    border: 3px solid rgba(150,54,64,0.7);
+
+    border-radius: 8px;
+
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.main-area {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+    gap: 50px;
+
+    margin-top: 30px;
+}
+
+.card h2 {
+    margin: 0;
+}
+
+
+.card p {
+    margin: 0;
+    text-align: center;
+}
+
+.card.selected {
+    transform: scale(1.08);
+    box-shadow: 0 0 20px rgb(145, 93, 201);
+}
+
+.info {
+    margin: 10px;
+    padding: 10px;
+    border: 2px solid #39d5ff;
+    background: #123a5a80;
+}
+.info {
+
+    position: relative;
+
+    width: 350px;
+
+    height: 400px;
+
+    padding: 20px;
+
+
+    border: 3px solid #39d5ff;
+
+    background: #123a5a80;
+}
+
+/* ゲームスタートボタン */
+.game-start {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+
+    padding: 15px 35px;
+    font-size: 20px;
+    font-weight: bold;
+
+    color: white;
+    background: #ff0d0d;
+    border: none;
+    border-radius: 10px;
+
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.game-start:hover {
+    transform: scale(1.05);
+    background: #991010;
+}
