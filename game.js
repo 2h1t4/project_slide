@@ -2,13 +2,13 @@ const game = document.getElementById("game");
 const player = document.getElementById("player");
 const rect = game.getBoundingClientRect();
 const notes = document.getElementById("notes");
-const editerarea = document.getElementById("editerarea");
+// const editerarea = document.getElementById("editerarea");
 const playerRect = player.getBoundingClientRect();
 const playerTop = playerRect.top - rect.top;
 const notesList = [];
 const startTime = performance.now();
-const travelTime = 16470; 
-const judgeLineY = 10000;
+const travelTime = 1500; 
+const judgeLineY = 850;
 const judgeText = document.getElementById("judgeText");
 const judgeTime = document.getElementById("judgeTime");
 const score = document.getElementById("score");
@@ -59,101 +59,101 @@ document.addEventListener("keydown", (event) => {
 });
 
 
-game.addEventListener("mousedown",(event) => {
-    const rect = game.getBoundingClientRect();
-    if(event.button === 0){
-        const editRect = editerarea.getBoundingClientRect();
+// game.addEventListener("mousedown",(event) => {
+//     const rect = game.getBoundingClientRect();
+//     if(event.button === 0){
+//         const editRect = editerarea.getBoundingClientRect();
 
-        const x = event.clientX - rect.left;
-        const y = event.clientY - editRect.top;
+//         const x = event.clientX - rect.left;
+//         const y = event.clientY - editRect.top;
 
-        let nearst = null;
-        let min = Infinity;
+//         let nearst = null;
+//         let min = Infinity;
 
-        gridLinesList.forEach(grid =>{
-            const distance = Math.abs(y - grid.y);
+//         gridLinesList.forEach(grid =>{
+//             const distance = Math.abs(y - grid.y);
 
-            if(min > distance){
-                min = distance;
-                nearst = grid;
-            }
-        });
-        let noteTime = nearst.timeMs + 1000;
-        createNote(x,noteTime)
+//             if(min > distance){
+//                 min = distance;
+//                 nearst = grid;
+//             }
+//         });
+//         let noteTime = nearst.timeMs + 1000;
+//         createNote(x,noteTime)
 
-    }else if(event.button === 2){
-        event.preventDefault();
-        const editRect = editerarea.getBoundingClientRect();
-        for (let i = notesList.length - 1; i >= 0; i--){
-            const note = notesList[i];
-            const x = event.clientX - rect.left;
-            const y = event.clientY - editRect.top;
+//     }else if(event.button === 2){
+//         event.preventDefault();
+//         const editRect = editerarea.getBoundingClientRect();
+//         for (let i = notesList.length - 1; i >= 0; i--){
+//             const note = notesList[i];
+//             const x = event.clientX - rect.left;
+//             const y = event.clientY - editRect.top;
             
-            const noteLeft = note.x;
-            const noteRight = note.x + noteWidth;
-            const noteTop = note.element.offsetTop;
-            const noteBottom = noteTop + note.element.offsetHeight;
+//             const noteLeft = note.x;
+//             const noteRight = note.x + noteWidth;
+//             const noteTop = note.element.offsetTop;
+//             const noteBottom = noteTop + note.element.offsetHeight;
 
-            const isOverlapX = x < noteRight && x > noteLeft;
-            const isOverlapY = y > noteTop && y < noteBottom;
-            if(isOverlapX && isOverlapY){
-                note.element.remove();
-                notesList.splice(i, 1);
-                chart.splice(i,1);
-                break;
-            }
-        }
+//             const isOverlapX = x < noteRight && x > noteLeft;
+//             const isOverlapY = y > noteTop && y < noteBottom;
+//             if(isOverlapX && isOverlapY){
+//                 note.element.remove();
+//                 notesList.splice(i, 1);
+//                 chart.splice(i,1);
+//                 break;
+//             }
+//         }
         
-    }
-});
+//     }
+// });
 
 
 
 
-document.addEventListener("wheel", (event) => {
-    const rect = game.getBoundingClientRect();
-    if(isPlaying)return;
+// document.addEventListener("wheel", (event) => {
+//     const rect = game.getBoundingClientRect();
+//     if(isPlaying)return;
 
-    const mouseX = event.clientX;
-    const mouseY = event.clientY;
+//     const mouseX = event.clientX;
+//     const mouseY = event.clientY;
 
-    // ゲーム画面内なら何もしない
-    if (
-        mouseX >= rect.left &&
-        mouseX <= rect.right &&
-        mouseY >= rect.top &&
-        mouseY <= rect.bottom
-    ) {
-        return;
-    }
+//     // ゲーム画面内なら何もしない
+//     if (
+//         mouseX >= rect.left &&
+//         mouseX <= rect.right &&
+//         mouseY >= rect.top &&
+//         mouseY <= rect.bottom
+//     ) {
+//         return;
+//     }
 
-    const moveTime = 500;
-    if(event.deltaY > 0){
-        music.currentTime -= moveTime / 1000;
-    }else {
-        // 下スクロール → 後ろへ
-        music.currentTime += moveTime / 1000;
-    }
-    if (music.currentTime < 0) {
-            music.currentTime = 0;
-        }
+//     const moveTime = 500;
+//     if(event.deltaY > 0){
+//         music.currentTime -= moveTime / 1000;
+//     }else {
+//         // 下スクロール → 後ろへ
+//         music.currentTime += moveTime / 1000;
+//     }
+//     if (music.currentTime < 0) {
+//             music.currentTime = 0;
+//         }
 
-        if (music.currentTime > music.duration) {
-            music.currentTime = music.duration;
-        }
-
-
-        // Smooth Audio Clockを同期
-        audioStartTime = performance.now() - music.currentTime * 1000;
-});
+//         if (music.currentTime > music.duration) {
+//             music.currentTime = music.duration;
+//         }
 
 
+//         // Smooth Audio Clockを同期
+//         audioStartTime = performance.now() - music.currentTime * 1000;
+// });
 
-let gridDivistion = 4;
-function changeGrid(div){
-    gridDivistion = div;
-    initTimelineLines(totalDurationSec, bpm);
-}
+
+
+// let gridDivistion = 4;
+// function changeGrid(div){
+//     gridDivistion = div;
+//     initTimelineLines(totalDurationSec, bpm);
+// }
 
 
 // BPMとタイムライングリッド線
@@ -169,7 +169,7 @@ function initTimelineLines(totalDurationSec, bpm) {
     gridLinesList.length = 0;
 
     const beat = 60 / bpm;
-    const intervalSec = beat * (4 / gridDivistion);
+    const intervalSec = beat;
     let count = 0;
 
     for (let t = 0; t <= totalDurationSec; t += intervalSec) {
@@ -219,11 +219,11 @@ function createNote(x, noteTime) {
         element: newNote
     });
 
-    chart.push({
-        x:x,
-        noteTime:noteTime
-    });
-    console.log(chart);
+    // chart.push({
+    //     x:x,
+    //     noteTime:noteTime
+    // });
+    // console.log(chart);
 }
 
 function clearNotes() {
@@ -235,59 +235,112 @@ function clearNotes() {
     notesList.length = 0;
 }
 
-function loadChartData(data) {
-    clearNotes();
-    chart = [];
-    numNotes = data.length;
-    data.forEach(item => {
-        createNote(item.x, item.noteTime);
-    });
-}
+// function loadChartData(data) {
+//     clearNotes();
+//     chart = [];
+//     numNotes = data.length;
+//     data.forEach(item => {
+//         createNote(item.x, item.noteTime);
+//     });
+// }
 
-// 起動時に chart.json を自動取得試行
-async function loadDefaultChart() {
+
+async function loadChart(fileName){
     try {
-        const res = await fetch("chart.json");
-        if (res.ok) {
-            const data = await res.json();
-            loadChartData(data);
+        const res = await fetch(fileName);
+        if(!res.ok){
+            throw new Error("ファイルが開けませんでした");
         }
-    } catch (e) {
-        console.log("chart.json 自動読込スキップ（ファイル選択ボタンから読込可能）:", e);
+
+        const data = await res.json();
+        numNotes = data.length;
+        data.forEach(element => {
+            createNote(
+                element.x,
+                element.noteTime
+            );
+        });
+    } catch(e) {
+        console.log("譜面読み込みエラー:", e);
     }
 }
-loadDefaultChart();
+loadChart("ECM II.json");
+
+// 起動時に chart.json を自動取得試行
+// async function loadDefaultChart() {
+//     try {
+//         const res = await fetch("ECM Ⅱ.json");
+//         if (res.ok) {
+//             const data = await res.json();
+//             loadChartData(data);
+//         }
+//     } catch (e) {
+//         console.log("chart.json 自動読込スキップ（ファイル選択ボタンから読込可能）:", e);
+//     }
+// }
+// loadDefaultChart();
+
+
+
+
+// async function loadChart(fileName){
+//     try {
+//         const res = await fetch(fileName);
+//         if(!res.ok){
+//             throw new Error("ファイルが開けませんでした");
+//         }
+
+//         const data = await res.json();
+//         numNotes = data.length;
+//         data.forEach(element => {
+//             createNote(
+//                 element.x,
+//                 element.noteTime
+//             );
+//         });
+//     } catch(e) {
+//         console.log("譜面読み込みエラー:", e);
+//     }
+// }
+// loadChart("ECM Ⅱ.json");
+
+
 
 // ファイル選択UIからの読み込みハンドラ
-const chartInput = document.getElementById("chartInput");
-if (chartInput) {
-    chartInput.addEventListener("change", (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
+// const chartInput = document.getElementById("chartInput");
+// if (chartInput) {
+//     chartInput.addEventListener("change", (event) => {
+//         const file = event.target.files[0];
+//         if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const data = JSON.parse(e.target.result);
-                loadChartData(data);
-            } catch (err) {
-                alert("JSONファイルの読み込みに失敗しました。フォーマットを確認してください。");
-            }
-        };
-        reader.readAsText(file);
-    });
-}
+//         const reader = new FileReader();
+//         reader.onload = (e) => {
+//             try {
+//                 const data = JSON.parse(e.target.result);
+//                 loadChartData(data);
+//             } catch (err) {
+//                 alert("JSONファイルの読み込みに失敗しました。フォーマットを確認してください。");
+//             }
+//         };
+//         reader.readAsText(file);
+//     });
+// }
 
-function saveChart(chartData) {
-    const json = JSON.stringify(chartData, null, 4);
-    const blob = new Blob([json], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "chart.json";
-    a.click();
-    URL.revokeObjectURL(url);
-}
+// function saveChart(chartData) {
+//     const json = JSON.stringify(chartData, null, 4);
+//     const blob = new Blob([json], { type: "application/json" });
+//     const url = URL.createObjectURL(blob);
+//     const a = document.createElement("a");
+//     a.href = url;
+//     a.download = "chart.json";
+//     a.click();
+//     URL.revokeObjectURL(url);
+// }
+
+
+
+
+
 
 // スムーズな音楽時間計算関数 (Smooth Audio Clock + offset)
 function getSmoothMusicTime() {
@@ -320,6 +373,10 @@ function showJudge(text, judgeError) {
     }, 300);
 }
 
+
+
+
+
 let sumScore = 0;
 if (score) score.textContent = Math.floor(sumScore).toString().padStart(7, "0");
 
@@ -333,9 +390,12 @@ function scoreCheck(text) {
     if (score) score.textContent = Math.floor(sumScore).toString().padStart(7, "0");
 }
 
+
+
+
+
 let totalConbo = 0; 
 if (combo) combo.textContent = totalConbo;
-
 function comboCount(text) {
     if (text == "perfect" || text == "great") {
         totalConbo += 1;
@@ -344,6 +404,9 @@ function comboCount(text) {
     }
     if (combo) combo.textContent = totalConbo;
 }
+
+
+
 
 function checkHit(currentTime) {
     const playerRight = playerX + playerWidth;
@@ -364,8 +427,8 @@ function checkHit(currentTime) {
             error < 85 &&
             error > 80
         ) {
-            // note.element.remove();
-            // notesList.splice(i, 1);
+            note.element.remove();
+            notesList.splice(i, 1);
             showJudge("miss", judgeError);
             comboCount("miss");
             break;
@@ -376,8 +439,8 @@ function checkHit(currentTime) {
             error <= 80 &&
             error > 50
         ) {
-            // note.element.remove();
-            // notesList.splice(i, 1);
+            note.element.remove();
+            notesList.splice(i, 1);
             showJudge("great", judgeError);
             scoreCheck("great");
             comboCount("great");
@@ -388,8 +451,8 @@ function checkHit(currentTime) {
             isOverlapX &&
             error <= 50
         ) {
-            // note.element.remove();
-            // notesList.splice(i, 1);
+            note.element.remove();
+            notesList.splice(i, 1);
             showJudge("perfect", judgeError);
             scoreCheck("perfect");
             comboCount("perfect");
@@ -398,10 +461,14 @@ function checkHit(currentTime) {
     }
 }
 
+
+
+
+
 function updatanote(currentTime) {
     for (let i = notesList.length - 1; i >= 0; i--) {
         const note = notesList[i];
-        const remain = note.noteTime - currentTime;
+        const remain = note.noteTime - 9000 - currentTime;
         const progress = 1 - remain / travelTime;
         const y = progress * judgeLineY;
         
@@ -414,8 +481,8 @@ function updatanote(currentTime) {
 
         const error = currentTime - note.noteTime;
         if (isPlaying && error > 500) {
-            // note.element.remove();
-            // notesList.splice(i, 1);
+            note.element.remove();
+            notesList.splice(i, 1);
             showJudge("miss");
             comboCount("miss");
         }

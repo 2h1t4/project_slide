@@ -81,7 +81,7 @@ async function loadChart(fileName){
         console.log("譜面読み込みエラー:", e);
     }
 }
-loadChart("chart.json");
+loadChart("ECM II.json");
 
 // スムーズな音楽時間計算関数 (Smooth Audio Clock)
 function getSmoothMusicTime() {
@@ -233,6 +233,7 @@ function gameLoop(){
     const currentMusicTime = getSmoothMusicTime();
 
     if(isPlaying){
+        music.play();
         checkHit(currentMusicTime);
         updatanote(currentMusicTime);
         ispressed = false;
