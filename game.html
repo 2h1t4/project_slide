@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Simple Rhythm Game</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="game.css">
 </head>
 
 <body>
+<audio id="music" src="ECM_II_OP_8551.mp3"></audio>
+<button id = "Select" onclick="location.href='Select.html'">
+    選曲画面
+</button>
 
 <div id="game">
 
@@ -15,7 +19,9 @@
         <div id = "combo"></div>
         <div id = "life">LIFE : red</div>
     </div>
+    <div id = "gridLine">
 
+    </div>
     <!-- ノーツ置き場 -->
     <div id="notes">
         
@@ -27,10 +33,10 @@
     <div id = "judgeText"></div>
     <div id = "judgeTime"></div>
 </div>
-<button onclick="location.href='editer.html'">
+<button id = "editer" onclick="location.href='editer.html'">
     エディター
 </button>
 
 </body>
-<script src="script.js"></script>
+<script src="game.js"></script>
 </html>

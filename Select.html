@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -76,4 +77,81 @@
 
     <script src="Select.js"></script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Song Select</title>
+
+    <link rel="stylesheet" href="Select.css">
+</head>
+
+<body>
+    <div class="bg"></div>
+
+    <header>
+        <h1>🎵SONG SELECT🎵</h1>
+    </header>
+
+    <button class="back-btn" onclick = "location.href='Music_select_screen.html'">◀ BACK</button>
+
+
+
+    <div class="levels">
+    <button class="level-btn" data-level="All">All</button>      
+    <button class="level-btn" data-level="8">Level 8</button>    
+    <button class="level-btn" data-level="9">Level 9</button>
+    <button class="level-btn active" data-level="10">Level 10</button>
+    <button class="level-btn" data-level="11">Level 11</button>
+    <button class="level-btn" data-level="12">Level 12</button>
+</div>
+
+    <section class="songs">
+        <div class="card selected" data-level="9">
+            <div class="art">JACKET</div>
+            <h2>Voyager</h2>
+            <p>takawan</p>
+            <p>Lv9</p>
+        </div>
+
+        <div class="card" data-level="10">
+            <div class="art">JACKET</div>
+            <h2>Ardent Gaff</h2>
+            <p>Lv10</p>
+        </div>
+
+        <div class="card" data-level="11">
+            <div class="art">JACKET</div>
+            <h2>Ardent Gaff</h2>
+            <p>Lv11</p>
+        </div>
+
+        <div class="card" data-level="12">
+            <div class="art">JACKET</div>
+            <h2>Ardent Gaff</h2>
+            <p>Lv12</p>
+        </div>
+        
+        <div class="card" data-level="12">
+            <div class="art">JACKET</div>
+            <h2>maessigkeit</h2>
+            <p>Lv12</p>
+        </div>
+    </section>
+
+<aside class="info">
+    <button class="game-start" style="display:none;" onclick = "location.href='game.html'">
+        GAME START
+    </button>
+
+    <h2>選択中</h2>
+    <p>曲情報表示</p>
+</aside>
+
+    <script src="Select.js"></script>
+</body>
+>>>>>>> a8a747f230fc880c8a92d5f1d73e3c0ec13e5d9d
 </html>
