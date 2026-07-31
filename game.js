@@ -159,8 +159,12 @@ document.addEventListener("keydown", (event) => {
 // BPMとタイムライングリッド線
 let bpm = 120;
 let noteIntervalSec = bpm / 60;
-let totalDurationSec = 35;
+let totalDurationSec = 0;
 
+music.addEventListener("loadedmetadata", () => {
+    totalDurationSec = music.duration;
+    initTimelineLines(totalDurationSec, bpm);
+});
 
 function initTimelineLines(totalDurationSec, bpm) {
     const container = document.getElementById("gridLine");
@@ -390,6 +394,7 @@ function scoreCheck(text) {
         sumScore += noteScore * 0.7;
     }
     if (score) score.textContent = Math.floor(sumScore).toString().padStart(7, "0");
+    return 
 }
 
 
@@ -474,10 +479,10 @@ function updatanote(currentTime) {
         const progress = 1 - remain / travelTime;
         const y = progress * judgeLineY;
         
-        if (y >= -50 && y <= judgeLineY + 100) {
+        if (y >= -100 && y <= judgeLineY + 100) {
             note.element.style.display = "block";
             note.element.style.top = (y - 18) + "px";
-        } else if (y < -50) {
+        } else if (y < -100) {
             note.element.style.display = "none";
         }
 
@@ -505,6 +510,9 @@ document.addEventListener("keydown", (event) => {
         music.pause();
 
     }
+});
+music.addEventListener("ended", () => {
+    location.href = "Select.html";
 });
 
 function gameLoop() {

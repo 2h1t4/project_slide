@@ -159,7 +159,12 @@ function changeGrid(div){
 // BPMとタイムライングリッド線
 let bpm = 120;
 let noteIntervalSec = bpm / 60;
-let totalDurationSec = 35;
+let totalDurationSec = 0;
+
+music.addEventListener("loadedmetadata", () => {
+    totalDurationSec = music.duration;
+    initTimelineLines(totalDurationSec, bpm);
+});
 
 
 function initTimelineLines(totalDurationSec, bpm) {
