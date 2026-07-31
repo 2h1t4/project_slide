@@ -7,8 +7,8 @@ const playerRect = player.getBoundingClientRect();
 const playerTop = playerRect.top - rect.top;
 const notesList = [];
 const startTime = performance.now();
-const travelTime = 16470; 
-const judgeLineY = 10000;
+const travelTime_editer = 12470; 
+const judgeLineY_editer = 10000;
 const judgeText = document.getElementById("judgeText");
 const judgeTime = document.getElementById("judgeTime");
 const score = document.getElementById("score");
@@ -127,7 +127,7 @@ document.addEventListener("wheel", (event) => {
         return;
     }
 
-    const moveTime = 500;
+    const moveTime = 100;
     if(event.deltaY > 0){
         music.currentTime -= moveTime / 1000;
     }else {
@@ -194,11 +194,11 @@ function updateTimelineLines(currentMusicTime) {
     for (let i = 0; i < gridLinesList.length; i++) {
         const lineObj = gridLinesList[i];
         const remain = lineObj.timeMs - currentMusicTime + 1010;
-        const progress = 1 - remain / travelTime;
-        const y = progress * judgeLineY;
+        const progress = 1 - remain / travelTime_editer;
+        const y = progress * judgeLineY_editer;
         lineObj.y = y;
 
-        if (y >= judgeLineY + 60) {
+        if (y >= judgeLineY_editer + 60) {
             lineObj.element.style.display = "none";
         } else {
             lineObj.element.style.display = "block";
@@ -402,25 +402,26 @@ function updatanote(currentTime) {
     for (let i = notesList.length - 1; i >= 0; i--) {
         const note = notesList[i];
         const remain = note.noteTime - currentTime;
-        const progress = 1 - remain / travelTime;
-        const y = progress * judgeLineY;
+        const progress = 1 - remain / travelTime_editer;
+        const y = progress * judgeLineY_editer;
         
-        if (y >= -50 && y <= judgeLineY + 100) {
+        if (y >= -50 && y <= judgeLineY_editer + 100) {
             note.element.style.display = "block";
             note.element.style.top = (y - 18) + "px";
-        } else if (y < -50) {
-            note.element.style.display = "none";
-        }
+        // } else if (y < -50) {
+        //     note.element.style.display = "none";
+        // }
 
         const error = currentTime - note.noteTime;
-        if (isPlaying && error > 500) {
+        if (isPlaying && error > 50) {
             // note.element.remove();
             // notesList.splice(i, 1);
-            showJudge("miss");
+            // showJudge("miss");
             comboCount("miss");
+            note.element.style.display = "none";
         }
     }
-}
+}}
 
 document.addEventListener("keydown", (event) => {
     if (event.code !== "Enter") return;

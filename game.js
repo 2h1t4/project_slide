@@ -7,8 +7,8 @@ const playerRect = player.getBoundingClientRect();
 const playerTop = playerRect.top - rect.top;
 const notesList = [];
 const startTime = performance.now();
-const travelTime = 1500; 
-const judgeLineY = 850;
+const travelTime = 1000; 
+const judgeLineY = 790;
 const judgeText = document.getElementById("judgeText");
 const judgeTime = document.getElementById("judgeTime");
 const score = document.getElementById("score");
@@ -17,7 +17,7 @@ const life = document.getElementById("life");
 const music = document.getElementById("music");
 const gridLinesList = [];
 let chart = [];
-let offset = 140;
+let offset = 155;
 let numNotes = 0;
 
 let playerX = 385;
@@ -165,6 +165,7 @@ let totalDurationSec = 35;
 function initTimelineLines(totalDurationSec, bpm) {
     const container = document.getElementById("gridLine");
     if (!container) return;
+
     container.innerHTML = "";
     gridLinesList.length = 0;
 
@@ -175,8 +176,9 @@ function initTimelineLines(totalDurationSec, bpm) {
     for (let t = 0; t <= totalDurationSec; t += intervalSec) {
         const line = document.createElement("div");
         line.className = "grid-line";
-        if (count % gridDivistion === 0) {
+        if (count % 4 === 0) {
             line.classList.add("bar-line");
+            console.log("qw");
         }
         container.appendChild(line);
 
@@ -193,7 +195,7 @@ function initTimelineLines(totalDurationSec, bpm) {
 function updateTimelineLines(currentMusicTime) {
     for (let i = 0; i < gridLinesList.length; i++) {
         const lineObj = gridLinesList[i];
-        const remain = lineObj.timeMs - currentMusicTime + 1010;
+        const remain = lineObj.timeMs - currentMusicTime + 900;
         const progress = 1 - remain / travelTime;
         const y = progress * judgeLineY;
         lineObj.y = y;
@@ -226,14 +228,14 @@ function createNote(x, noteTime) {
     // console.log(chart);
 }
 
-function clearNotes() {
-    notesList.forEach(note => {
-        if (note.element && note.element.parentNode) {
-            note.element.remove();
-        }
-    });
-    notesList.length = 0;
-}
+// function clearNotes() {
+//     notesList.forEach(note => {
+//         if (note.element && note.element.parentNode) {
+//             note.element.remove();
+//         }
+//     });
+//     notesList.length = 0;
+// }
 
 // function loadChartData(data) {
 //     clearNotes();
@@ -264,7 +266,7 @@ async function loadChart(fileName){
         console.log("譜面読み込みエラー:", e);
     }
 }
-loadChart("ECM II.json");
+loadChart("ECM 2.json");
 
 // 起動時に chart.json を自動取得試行
 // async function loadDefaultChart() {
@@ -468,7 +470,7 @@ function checkHit(currentTime) {
 function updatanote(currentTime) {
     for (let i = notesList.length - 1; i >= 0; i--) {
         const note = notesList[i];
-        const remain = note.noteTime - 9000 - currentTime;
+        const remain = note.noteTime - 110 - currentTime;
         const progress = 1 - remain / travelTime;
         const y = progress * judgeLineY;
         
