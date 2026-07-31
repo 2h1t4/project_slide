@@ -270,7 +270,7 @@ async function loadChart(fileName){
         console.log("譜面読み込みエラー:", e);
     }
 }
-loadChart("ECM 2.json");
+loadChart("ECM_2.json");
 
 // 起動時に chart.json を自動取得試行
 // async function loadDefaultChart() {
