@@ -412,8 +412,14 @@ function comboCount(text) {
     if (combo) combo.textContent = totalConbo;
 }
 
-
-
+let perfectnumber = 0;
+let greatnumber = 0;
+let missnumber = 0;
+function noteCount(text){
+    if(text === "perfect"){
+        perfectnumber
+    }
+}
 
 function checkHit(currentTime) {
     const playerRight = playerX + playerWidth;

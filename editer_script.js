@@ -160,12 +160,10 @@ function changeGrid(div){
 let bpm = 120;
 let noteIntervalSec = bpm / 60;
 let totalDurationSec = 0;
-
 music.addEventListener("loadedmetadata", () => {
     totalDurationSec = music.duration;
     initTimelineLines(totalDurationSec, bpm);
 });
-
 
 function initTimelineLines(totalDurationSec, bpm) {
     const container = document.getElementById("gridLine");
