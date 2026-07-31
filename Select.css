@@ -34,6 +34,7 @@ body {
     cursor: pointer;
 
     transition: 0.2s;
+    z-index: 1000;
 }
 
 .back-btn:hover {
@@ -157,6 +158,7 @@ button {
 
     cursor: pointer;
     transition: 0.2s;
+    z-index: 1000;
 }
 
 .game-start:hover {

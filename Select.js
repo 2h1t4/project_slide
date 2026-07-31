@@ -1,4 +1,6 @@
-
+// document.getElementById("gameStart").addEventListener("click", function(){
+//     window.location.href="MusicSelectScreen.html";
+// })
 document.querySelectorAll('.card').forEach(card => {
     card.onclick = () => {
 
@@ -19,7 +21,7 @@ document.querySelectorAll('.card').forEach(card => {
 });
 
 document.querySelector('.back-btn').addEventListener('click', () => {
-    window.location.href = "./Music select screen.html";
+    window.location.href = "./MusicSelectScreen.html";
 });
 
 const levelButtons = document.querySelectorAll(".level-btn");
